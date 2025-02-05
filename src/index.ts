@@ -7,11 +7,10 @@ async function main() {
   walletManager.registerFactory("ethereum", ethFactory);
 
   try {
-    const walletManager = new WalletManager();
     const ethWallet = await walletManager.createWallet("ethereum");
     console.log("created ethereum wallet ", ethWallet);
-  } catch {
-    console.error("Error creating wallet");
+  } catch (error) {
+    console.error("Error creating wallet", error);
   }
 }
 
