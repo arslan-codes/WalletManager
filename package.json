@@ -11,11 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^22.13.1",
+    "bip32": "^5.0.0-rc.0",
+    "bip39": "^3.1.0",
     "ethers": "^6.13.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "devDependencies": {
+    "@types/bip32": "^2.0.4",
     "@types/bip39": "^3.0.4"
   }
 }

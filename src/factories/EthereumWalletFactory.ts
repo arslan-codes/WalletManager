@@ -1,8 +1,7 @@
 import { couldStartTrivia } from "typescript";
 import BaseWalletFactory from "./BaseWalletFactory";
 import { Iwallet } from "../interfaces/Iwallet";
-import { IwalletFactory } from "../interfaces/IwalletFactory";
-import { ethers } from "ethers";
+import { ethers, Wallet } from "ethers";
 
 class EthereumWalletFactory extends BaseWalletFactory {
   //cosntuctor to set the network configuration
@@ -10,28 +9,36 @@ class EthereumWalletFactory extends BaseWalletFactory {
     super(networkConfig);
   }
 
+  //admin generated wallet
   async generateWallet(): Promise<Iwallet> {
-    const keyPair = await this.generateKeyPair();
+    const menemonic = this.generateMnemonic();
+    return this.generateWalletFromMnemonic(menemonic, "m/44'/60'/0'/0/0");
+  }
+  //for the mnemonic someone else  will give
+  async generateWalletFromMnemonic(
+    mnemonic: string,
+    derivationPath: string
+  ): Promise<Iwallet> {
+    const keyPair = await this.generateKeyPairFromMnemonic(
+      mnemonic,
+      derivationPath
+    );
     const encryptedPrivateKey = await this.encryptPrivateKey(
       keyPair.privateKey
     );
-    //return the wallet object
+    const Wallet = new ethers.Wallet(keyPair.privateKey);
+    const address = Wallet.address;
+
     return {
       address: keyPair.address,
       publickey: keyPair.publicKey,
       encryptedPrivateKey,
       network: "ethereum",
+      mnemonic,
+      derivationPath,
     };
   }
 
-  protected async generateKeyPair() {
-    const wallet = ethers.Wallet.createRandom();
-    return {
-      privateKey: wallet.privateKey,
-      publicKey: wallet.publicKey,
-      address: wallet.address,
-    };
-  }
   //validate the wallet object
   validateWallet(wallet: Iwallet): boolean {
     return ethers.isAddress(wallet.address);

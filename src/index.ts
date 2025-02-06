@@ -5,6 +5,7 @@ async function main() {
   const walletManager = new WalletManager();
   const ethFactory = new EthereumWalletFactory({});
   walletManager.registerFactory("ethereum", ethFactory);
+  console.log(walletManager.factories);
 
   try {
     const ethWallet = await walletManager.createWallet("ethereum");

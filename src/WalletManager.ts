@@ -8,7 +8,7 @@ Allows registering new factories and creating/validating wallets.
 */
 
 class WalletManager {
-  private factories: Map<string, IwalletFactory>;
+  public factories: Map<string, IwalletFactory>;
 
   constructor() {
     this.factories = new Map();
