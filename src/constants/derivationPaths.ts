@@ -20,5 +20,5 @@
 export const DERIVATION_PATHS = {
   BTC: "m/44'/0'/0'/0/0",
   ETH: "m/44'/60'/0'/0/0",
-  SOL: "m/44'/501'/0'/0'", // Common derivation for Solana
+  SOL: "m/44'/501'/0'/0'",
 };

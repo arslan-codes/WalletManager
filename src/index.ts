@@ -1,4 +1,6 @@
 import { WalletManager } from "./WalletManager";
+import { IwalletMapping } from "./interfaces/IwalletMapping";
+
 import * as bip39 from "bip39";
 
 function main() {
@@ -31,6 +33,16 @@ function main() {
     "priv key: ",
     solWallet.encryptedPrivateKey
   );
+
+  const walletMapping: IwalletMapping = {
+    mnemonic: masterMnemonic,
+    addresses: {
+      ETH: ethWallet.address,
+      BTC: btcWallet.address,
+      SOL: solWallet.address,
+    },
+  };
+  console.log("Wallet Mapping:", walletMapping);
 }
 
 main();
