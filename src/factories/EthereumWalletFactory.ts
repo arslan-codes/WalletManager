@@ -1,47 +1,25 @@
-import { couldStartTrivia } from "typescript";
-import BaseWalletFactory from "./BaseWalletFactory";
-import { Iwallet } from "../interfaces/Iwallet";
-import { ethers, Wallet } from "ethers";
+import { IwalletFactory } from "../interfaces/IwalletFactory";
+import { EthereumWallet } from "../wallets/EthereumWallet";
+import { HDWallet } from "../utils/hdwallet";
+import { DERIVATION_PATHS } from "../constants/derivationPaths";
 
-class EthereumWalletFactory extends BaseWalletFactory {
-  //cosntuctor to set the network configuration
-  constructor(networkConfig: any) {
-    super(networkConfig);
+export class EthereumWalletFactory implements IwalletFactory {
+  private hdWallet: HDWallet;
+  constructor(mnemonic: string) {
+    this.hdWallet = new HDWallet(mnemonic);
   }
 
-  //admin generated wallet
-  async generateWallet(): Promise<Iwallet> {
-    const menemonic = this.generateMnemonic();
-    return this.generateWalletFromMnemonic(menemonic, "m/44'/60'/0'/0/0");
-  }
-  //for the mnemonic someone else  will give
-  async generateWalletFromMnemonic(
-    mnemonic: string,
-    derivationPath: string
-  ): Promise<Iwallet> {
-    const keyPair = await this.generateKeyPairFromMnemonic(
-      mnemonic,
-      derivationPath
+  createWallet() {
+    const derivationPath = DERIVATION_PATHS.ETH;
+    const keyPair = this.hdWallet.deriveKeyPair(derivationPath);
+    // Encrypt the private key (for demo, base64‑encode it)
+    const encryptedPrivateKey = Buffer.from(keyPair.privateKey).toString(
+      "base64"
     );
-    const encryptedPrivateKey = await this.encryptPrivateKey(
-      keyPair.privateKey
-    );
-    const Wallet = new ethers.Wallet(keyPair.privateKey);
-    const address = Wallet.address;
-
-    return {
-      address: keyPair.address,
-      publickey: keyPair.publicKey,
-      encryptedPrivateKey,
-      network: "ethereum",
-      mnemonic,
+    return new EthereumWallet(
+      keyPair.privateKey,
       derivationPath,
-    };
-  }
-
-  //validate the wallet object
-  validateWallet(wallet: Iwallet): boolean {
-    return ethers.isAddress(wallet.address);
+      encryptedPrivateKey
+    );
   }
 }
-export default EthereumWalletFactory;

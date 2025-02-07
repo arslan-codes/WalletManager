@@ -1,18 +1,36 @@
-import WalletManager from "./WalletManager";
-import EthereumWalletFactory from "./factories/EthereumWalletFactory";
+import { WalletManager } from "./WalletManager";
+import * as bip39 from "bip39";
 
-async function main() {
-  const walletManager = new WalletManager();
-  const ethFactory = new EthereumWalletFactory({});
-  walletManager.registerFactory("ethereum", ethFactory);
-  console.log(walletManager.factories);
+function main() {
+  const masterMnemonic = bip39.generateMnemonic(); //12 word menemonic
 
-  try {
-    const ethWallet = await walletManager.createWallet("ethereum");
-    console.log("created ethereum wallet ", ethWallet);
-  } catch (error) {
-    console.error("Error creating wallet", error);
-  }
+  const walletManager = new WalletManager(masterMnemonic);
+
+  console.log("Master Mnemonic:", masterMnemonic);
+  // Create wallets for each chain
+  const ethWallet = walletManager.createWallet("ETH");
+  const btcWallet = walletManager.createWallet("BTC");
+  const solWallet = walletManager.createWallet("SOL");
+
+  console.log(
+    "Ethereum Wallet Address:",
+    ethWallet.address,
+    "priv key: ",
+    ethWallet.encryptedPrivateKey
+  );
+
+  console.log(
+    "Bitcoin Wallet Address:",
+    btcWallet.address,
+    "priv key: ",
+    btcWallet.encryptedPrivateKey
+  );
+  console.log(
+    "Solana Wallet Address:",
+    solWallet.address,
+    "priv key: ",
+    solWallet.encryptedPrivateKey
+  );
 }
 
 main();
